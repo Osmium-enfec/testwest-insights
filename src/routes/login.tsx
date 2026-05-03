@@ -4,6 +4,7 @@ import { authService } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/lib/api/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Home, Loader2, LogIn } from "lucide-react";
 
