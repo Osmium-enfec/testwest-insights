@@ -17,6 +17,7 @@ function LoginRoute() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: user, isLoading: isUserLoading } = useUser();
 
   // Redirect if already logged in
@@ -31,6 +32,7 @@ function LoginRoute() {
     setLoading(true);
     try {
       await authService.login({ email, password });
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
       toast.success("Login successful!", { description: "Redirecting to dashboard..." });
       navigate({ to: "/dashboard" });
     } catch (err: any) {
