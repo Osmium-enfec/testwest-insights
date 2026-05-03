@@ -4,7 +4,7 @@ import { StudentDashboardData, ParentDashboardData, TestAttempt, User } from "@/
 import { authService } from "../../services/api";
 
 export function useUser() {
-  const hasToken = !!localStorage.getItem("testwest_token");
+  const hasToken = typeof window !== "undefined" && !!window.localStorage.getItem("testwest_token");
   return useQuery<User & { profile: any }>({
     queryKey: ["me"],
     queryFn: () => authService.getMe(),
