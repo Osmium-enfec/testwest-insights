@@ -129,7 +129,7 @@ export function StudentDashboard() {
                     )}
                   </div>
                   <Button asChild size="sm">
-                    <Link to={`/test/${test.id}/take`}>
+                    <Link to="/test/$testId/take" params={{ testId: test.id }}>
                       Start Test
                     </Link>
                   </Button>

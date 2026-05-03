@@ -356,13 +356,13 @@ function TestRow({ t }: { t: TestAttempt }) {
       </TableCell>
       <TableCell className="pr-5">
         {t.status === "Completed" ? (
-          <Link to={`/test/${t.id}/results`}>
+          <Link to="/test/$testId/results" params={{ testId: t.id }}>
             <Badge variant="secondary" className="font-normal cursor-pointer hover:bg-secondary/80">
               {t.status}
             </Badge>
           </Link>
         ) : (
-          <Link to={`/test/${t.id}/take`}>
+          <Link to="/test/$testId/take" params={{ testId: t.id }}>
             <Badge variant="default" className="font-normal cursor-pointer hover:bg-primary/80">
               {t.status === "In progress" ? "Continue" : "Start"}
             </Badge>
