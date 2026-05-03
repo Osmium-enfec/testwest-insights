@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_API_URL || "http://localhost:8000";
+export const API_URL = import.meta.env.VITE_API_URL || "https://testwest.onrender.com";
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = localStorage.getItem("testwest_token");
