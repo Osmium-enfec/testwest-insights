@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { useUser } from "@/lib/api/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Home, Loader2, LogIn } from "lucide-react";
+import { AlertCircle, Home, Loader2, LogIn } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const Route = createFileRoute("/login")({
   component: LoginRoute,
@@ -16,6 +17,7 @@ function LoginRoute() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: user, isLoading: isUserLoading } = useUser();
@@ -30,13 +32,16 @@ function LoginRoute() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       await authService.login({ email, password });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       toast.success("Login successful!", { description: "Redirecting to dashboard..." });
       navigate({ to: "/dashboard" });
     } catch (err: any) {
-      toast.error("Login failed", { description: err.message || "Invalid email or password" });
+      const msg = err?.message || "Invalid email or password";
+      setError(msg);
+      toast.error("Login failed", { description: msg });
     } finally {
       setLoading(false);
     }
@@ -75,6 +80,13 @@ function LoginRoute() {
 
           <div className="rounded-2xl border bg-card p-6 shadow-lg">
             <form onSubmit={handleLogin} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Sign in failed</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Email</label>
                 <Input 

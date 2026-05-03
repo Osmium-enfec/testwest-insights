@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUser } from "@/lib/api/hooks";
 import { toast } from "sonner";
-import { Home, Loader2, UserPlus } from "lucide-react";
+import { AlertCircle, Home, Loader2, UserPlus } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const Route = createFileRoute("/signup")({
   component: SignupRoute,
@@ -21,6 +22,7 @@ function SignupRoute() {
   const [grade, setGrade] = useState("6");
   const [board, setBoard] = useState("CBSE");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { data: user, isLoading: isUserLoading } = useUser();
 
@@ -34,6 +36,7 @@ function SignupRoute() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       const profile: any = {};
       if (role === "STUDENT" || role === "SOLO") {
@@ -56,7 +59,9 @@ function SignupRoute() {
       toast.success("Account created!", { description: "Welcome to TestWest!" });
       navigate({ to: "/dashboard" });
     } catch (err: any) {
-      toast.error("Signup failed", { description: err.message || "Please check your details and try again" });
+      const msg = err?.message || "Please check your details and try again";
+      setError(msg);
+      toast.error("Signup failed", { description: msg });
     } finally {
       setLoading(false);
     }
@@ -95,6 +100,13 @@ function SignupRoute() {
 
           <div className="rounded-2xl border bg-card p-6 shadow-lg">
             <form onSubmit={handleSignup} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Sign up failed</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
               {/* Role selector */}
               <div className="flex p-1 bg-muted rounded-lg overflow-x-auto">
                 {(["STUDENT", "SOLO", "TEACHER", "PARENT", "SCHOOL"] as const).map((r) => (
