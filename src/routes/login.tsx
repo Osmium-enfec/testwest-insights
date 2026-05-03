@@ -4,6 +4,7 @@ import { authService } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/lib/api/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Home, Loader2, LogIn } from "lucide-react";
 
@@ -16,6 +17,7 @@ function LoginRoute() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: user, isLoading: isUserLoading } = useUser();
 
   // Redirect if already logged in
@@ -30,6 +32,7 @@ function LoginRoute() {
     setLoading(true);
     try {
       await authService.login({ email, password });
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
       toast.success("Login successful!", { description: "Redirecting to dashboard..." });
       navigate({ to: "/dashboard" });
     } catch (err: any) {
