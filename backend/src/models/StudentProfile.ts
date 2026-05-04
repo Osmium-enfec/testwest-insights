@@ -10,6 +10,16 @@ const studentProfileSchema = new mongoose.Schema(
     classId: { type: mongoose.Schema.Types.ObjectId, ref: "Class", default: null },
     section: { type: String, default: "" },
     rollNo: { type: String, default: "" },
+    subjects: { type: [String], default: [] },
+    subjectChapters: {
+      type: [
+        {
+          subject: { type: String, required: true },
+          chapters: { type: [String], default: [] },
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true },
 );
