@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/shell/AppShell";
 import { StudentDashboard } from "@/features/student/StudentDashboard";
+import { StudentOnboarding } from "@/features/student/StudentOnboarding";
+import { getStudentProfileCompleteness } from "@/features/student/profile-completeness";
 import { useUser } from "@/lib/api/hooks";
 import { Loader2 } from "lucide-react";
 
@@ -26,9 +28,9 @@ export const Route = createFileRoute("/dashboard/student")({
 
 function StudentDashboardRoute() {
   const navigate = useNavigate();
-  const { data: user, isLoading } = useUser();
+  const { data: user, isLoading, refetch } = useUser();
+  const [bypass, setBypass] = useState(false);
 
-  // Redirect to login if not authenticated, or to correct dashboard if wrong role
   useEffect(() => {
     if (!isLoading) {
       if (!user) {
@@ -48,6 +50,20 @@ function StudentDashboardRoute() {
   }
 
   if (!user || user.role !== "STUDENT") return null;
+
+  const completeness = getStudentProfileCompleteness(user);
+
+  if (!completeness.complete && !bypass) {
+    return (
+      <StudentOnboarding
+        user={user}
+        onComplete={() => {
+          setBypass(true);
+          refetch();
+        }}
+      />
+    );
+  }
 
   return (
     <AppShell
